@@ -1,0 +1,12 @@
+mysql -u root -p
+USE tablename;
+
+python manage.py dbshell
+
+import data into the DB
+python manage.py shell
+from django.contrib.auth.hashers import make_password
+print(make_password("uhiduhfuhf"))
+pbkdf2_sha256$-9942r94r04094949j30eejeij
+
+python manage.py loaddata orders/..../demo_data.json
