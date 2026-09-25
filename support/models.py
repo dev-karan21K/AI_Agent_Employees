@@ -27,13 +27,13 @@ class Message(models.Model):
 class AgentLog(models.Model):
     EVENT_CHOICES = [
         ('support', 'Support Agent'),
-        ('too_call', 'Tool Call'),
+        ('tool_call', 'Tool Call'),
         ('too_result', 'Tool Result'),
         ('manager', 'Manager Agent'),
         ('risk', 'Risk Agent'),
         ('final', 'Final Reply'),
     ]
-    converation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='agentlogs')
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='agentlogs')
     event_type = models.CharField(max_length=20, choices=EVENT_CHOICES)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
