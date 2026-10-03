@@ -2,7 +2,7 @@
 URL configuration for dj_ai_employee_main project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
+    https://docs.djangoproject.com/en/6.1/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -18,14 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    path('login/', auth_views.LoginView.as_view(template_name="login.html"), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-
     path('orders/', include('orders.urls')),
-
     path('support/', include('support.urls')),
 ]

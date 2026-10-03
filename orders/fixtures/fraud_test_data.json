@@ -10,7 +10,7 @@
       "is_staff": false,
       "is_superuser": false,
       "is_active": true,
-      "password": "your_hashed_password_here",
+      "password": "pbkdf2_sha256$1500000$vOgpbIS3MdL0MZ9USMRxQo$3jydv6gd9skFL/mIRntjrlvlQ6SewgS3TsbGB3Qu9R4=",
       "date_joined": "2024-01-01T00:00:00Z",
       "last_login": null,
       "groups": [],

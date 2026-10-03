@@ -8,9 +8,11 @@ from support.agents import run_support_agent
 
 # Create your views here.
 def chat(request, order_id):
-    if request.method == 'POST':
+    if request.method == "POST":
         data = json.loads(request.body)
         user_message = data.get("message")
+
+        print("user message==>", user_message)
 
         if not user_message:
             return JsonResponse({"error": "Empty message"}, status=400)
@@ -22,7 +24,6 @@ def chat(request, order_id):
         # send user message and conversation to LLM
         reply = run_support_agent(user_message, conversation.id, order.id, request.user.id)
         # store the LLM reply
-        Message.objects.create(conversation=conversation, role='assistant', content=reply)
-
-        # time.sleep(5)
+        Message.objects.create(conversation=conversation, role="assistant", content=reply)
+        # time.sleep(4)
         return JsonResponse({"reply": reply})

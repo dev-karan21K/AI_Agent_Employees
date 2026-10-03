@@ -4,20 +4,20 @@ from orders.models import Order
 
 # Create your models here.
 class Conversation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="conversations")
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="conversations")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='conversations')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='conversations')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Conversation #{self.id} - {self.user.username} / Order #{self.order.id}"
-    
+
 class Message(models.Model):
-    ROLE_CHOICE = [
-        ("user", "User"),
-        ("assistant", "Assistant"),
+    ROLE_CHOICES = [
+        ('user', 'User'),
+        ('assistant', 'Assistant'),
     ]
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
-    role = models.CharField(max_length=20, choices=ROLE_CHOICE)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -26,12 +26,12 @@ class Message(models.Model):
 
 class AgentLog(models.Model):
     EVENT_CHOICES = [
-        ('support', 'Support Agent'),
-        ('tool_call', 'Tool Call'),
-        ('too_result', 'Tool Result'),
-        ('manager', 'Manager Agent'),
-        ('risk', 'Risk Agent'),
-        ('final', 'Final Reply'),
+        ("support", "Support Agent"),
+        ("tool_call", "Tool Call"),
+        ("tool_result", "Tool Result"),
+        ("manager", "Manager Agent"),
+        ("risk", "Risk Agent"),
+        ("final", "Final Reply"),
     ]
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='agentlogs')
     event_type = models.CharField(max_length=20, choices=EVENT_CHOICES)

@@ -311,48 +311,48 @@
     </div>
 
     <div class="col-md-4">
-      <!-- help card - visible by default -->
+      <!-- Help card - visible -->
       <div class="help-card" id="help-card">
         <div style="font-size:32px;">💬</div>
         <h6>Need help with this order?</h6>
         <p>Our AI support agent can help you with delivery issues, refunds, or any other concerns.</p>
-        <button onclick="showChat()" class="btn-help">Get Help</button>
+        <button class="btn-help" onclick="showChat()">Get Help</button>
       </div>
 
-      <!-- chat box - hidden by default -->
+      <!-- Chat box - hidden by default -->
       <div id="chat-box" class="card">
         <!-- header -->
         <div class="card-header d-flex align-items-center gap-2">
-          <div style="width: 8px; height: 8px; border-radius: 50%; background-color: green;"></div>
+          <div style="width: 8px;height: 8px;border-radius: 50%;background-color: green;"></div>
           <span class="fw-semibold" style="font-size: 13px;">Support Agent</span>
         </div>
 
-        <!-- chat area -->
+        <!-- Chat area -->
         <div id="chat-messages" class="chat-messages p-3 d-flex flex-column gap-2">
           {% if conversation %}
-            <!-- print the previoud messages -->
+            <!-- print the previous messages -->
              {% for msg in previous_messages %}
               {% if msg.role == 'user' %}
-                <div class="customer-message p-2 px-3" style="font-size: 13px;max-width: 85%;">
-                  {{msg.content}}
+                <div class="customer-message p-2 px-3" style="font-size: 13px;max-width: 80%;">
+                  {{ msg.content }}
                 </div>
               {% else %}
-                <div class="agent-message p-2 px-3" style="font-size: 13px;max-width: 85%;">
-                  {{msg.content}}
+                <div class="agent-message p-2 px-3" style="font-size: 13px;max-width: 80%;">
+                  {{ msg.content }}
                 </div>
               {% endif %}
              {% endfor %}
           {% else %}
           <div class="agent-message p-2 px-3" style="font-size: 13px; max-width: 80%;">
-            Hi {{ request.user.first_name }}, I'm Nivi, How can I help you with your order today
+            Hi {{ request.user.first_name }}, I'm Maya, How can I help you with your order today?
           </div>
           {% endif %}
         </div>
 
-        <!-- chat footer -->
+        <!-- Chat footer -->
         <div class="card-footer d-flex">
-          <input type="text" id="chat-input" class="form-control form-control-sm" placeholder="Type Your message...">
-          <button class="btn btn-dark btn-sm px-3" onclick="sendMessage()">Send</button>
+          <input type="text" id="chat-input" class="form-control form-control-sm" placeholder="Type your message...">
+          <button class="btn btn-dark btn-sm" onclick="sendMessage()">Send</button>
         </div>
       </div>
     </div>
@@ -362,86 +362,88 @@
 </div>
 
 <script>
-
   function showTyping(){
-    const messages = document.getElementById("chat-messages")
+    const messages = document.getElementById('chat-messages')
     messages.insertAdjacentHTML("beforeend", `
-    <div id="typing-indicator" class="agent-message p-2" style="font-size:13px;max-width:85%;">
-      Typing...  
+    <div id="typing-indicator" class="agent-message p-2 m-1" style="font-size:13px;max-width:85%;">
+      Typing...
     </div>
-    `)
+    `);
     messages.scrollTop = messages.scrollHeight;
   }
 
   function hideTyping(){
-    document.getElementById("typing-indicator").remove()
+    document.getElementById('typing-indicator').remove()
   }
 
   function showChat(){
-    document.getElementById('help-card').style.display = "none";
+    document.getElementById("help-card").style.display = "none";
+
     const chatBox = document.getElementById('chat-box');
     chatBox.classList.add('visible')
   }
 
   function appendMessage(text, type){
-    const messages = document.getElementById("chat-messages");
+    const messages = document.getElementById("chat-messages")
 
-    const div = document.createElement("div");
+    const div = document.createElement("div")
     div.classList.add(type === "customer" ? "customer-message" : "agent-message");
-    div.classList.add("p-2", "px-3");
+    div.classList.add("p-2", "px-3")
     div.style.fontSize = "13px";
-    div.style.maxWidth = "85%";
+    div.style.maxWidth = "80%";
     div.innerText = text;
 
     messages.appendChild(div)
     messages.scrollTop = messages.scrollHeight;
   }
-
   async function sendMessage(){
-    const input = document.getElementById("chat-input");
-    const message = input.value.trim();
-    
-    // don't send empty msg
+    const input = document.getElementById("chat-input")
+    const message = input.value.trim()
+
+    console.log('message==>', message)
+
     if(!message) return;
 
-    appendMessage(message, "customer");
-
+    appendMessage(message, 'customer')
     input.value = "";
     input.disabled = true;
 
     const typingTimeout = setTimeout(() => showTyping(), 1000)
 
     // send message to django view
-    try{
+    try {
       const response = await fetch("/support/chat/{{order.id}}/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}"
+          "X-CSRFToken": "{{ csrf_token }}",
         },
         body: JSON.stringify({message: message})
       });
+
+      // console.log('response==>', await response.json())
       const data = await response.json()
+      console.log("data==>", data)
+
       hideTyping()
-      appendMessage(data.reply, "agent")
+      appendMessage(data.reply, "agent");
       input.disabled = false;
-      input.focus()
-    }catch(error){
-      console.error("Error:", error)
+      input.focus();
+    } catch (error) {
+      console.error("Error: ", error)
       appendMessage("Sorry, something went wrong", "agent")
       input.disabled = false;
-      input.focus()
-    } finally{
+      input.focus();
+    } finally {
       clearTimeout(typingTimeout)
       hideTyping()
     }
+
   }
 
-  // send message on enter key
-  document.getElementById("chat-input").addEventListener("keydown", function(e){
+  document.getElementById('chat-input').addEventListener("keydown", function(e){
     if(e.key === "Enter") sendMessage();
   })
-
 </script>
 </body>
 </html>
